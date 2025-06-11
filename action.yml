@@ -1,6 +1,6 @@
-name: 'ECR Latest Image Resolver'
+name: 'ECR Image Resolver'
 description: 'Get the latest image tag from AWS ECR repository'
-author: 'Your Name'
+author: 'ouchi2501'
 branding:
   icon: 'download-cloud'
   color: 'orange'
