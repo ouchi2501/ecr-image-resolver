@@ -1,0 +1,30 @@
+name: 'ECR Latest Image Resolver'
+description: 'Get the latest image tag from AWS ECR repository'
+author: 'Your Name'
+branding:
+  icon: 'download-cloud'
+  color: 'orange'
+
+inputs:
+  repository-name:
+    description: 'ECR repository name'
+    required: true
+  aws-region:
+    description: 'AWS region'
+    required: true
+    default: 'us-east-1'
+  registry-id:
+    description: 'AWS account ID for ECR registry'
+    required: false
+
+outputs:
+  latest-tag:
+    description: 'Latest image tag in the ECR repository'
+  latest-image-uri:
+    description: 'Full URI of the latest image'
+  image-digest:
+    description: 'Digest of the latest image'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

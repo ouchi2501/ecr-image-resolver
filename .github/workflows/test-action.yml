@@ -1,0 +1,83 @@
+name: Test ECR Image Resolver Action
+
+on:
+  push:
+    branches: [ main, test ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      repository-name:
+        description: 'ECR repository name to test'
+        required: false
+        default: 'test-repo'
+      aws-region:
+        description: 'AWS region'
+        required: false
+        default: 'us-east-1'
+
+jobs:
+  # ローカルアクションとしてテスト
+  test-local-action:
+    runs-on: ubuntu-latest
+    name: Test as local action
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build action
+        run: npm run build
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ github.event.inputs.aws-region || 'us-east-1' }}
+      
+      # ローカルアクションとして実行
+      - name: Get latest ECR image
+        id: ecr-image
+        uses: ./
+        with:
+          repository-name: ${{ github.event.inputs.repository-name || 'test-repo' }}
+          aws-region: ${{ github.event.inputs.aws-region || 'us-east-1' }}
+      
+      - name: Display results
+        run: |
+          echo "🏷️ Latest tag: ${{ steps.ecr-image.outputs.latest-tag }}"
+          echo "🔗 Latest image URI: ${{ steps.ecr-image.outputs.latest-image-uri }}"
+          echo "🔐 Image digest: ${{ steps.ecr-image.outputs.image-digest }}"
+  
+  # ユニットテストの実行
+  run-tests:
+    runs-on: ubuntu-latest
+    name: Run unit tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests
+        run: npm test
+      
+      - name: Run type check
+        run: npm run typecheck
+      
+      - name: Run lint
+        run: npm run lint
