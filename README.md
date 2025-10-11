@@ -1,4 +1,6 @@
-# ECR Latest Image Resolver
+# ECR Image Resolver
+
+[![Test](https://github.com/ouchi2501/ecr-image-resolver/actions/workflows/test-action.yml/badge.svg)](https://github.com/ouchi2501/ecr-image-resolver/actions/workflows/test-action.yml)
 
 A GitHub Action to retrieve the latest image tag from an AWS ECR (Elastic Container Registry) repository.
 
@@ -48,7 +50,7 @@ jobs:
 
       - name: Get latest ECR image
         id: ecr-image
-        uses: your-username/ecr-image-resolver@v1
+        uses: ouchi2501/ecr-image-resolver@v1.0.0
         with:
           repository-name: 'my-app'
           aws-region: 'us-east-1'
@@ -95,6 +97,30 @@ jobs:
           # Your deployment commands here
 ```
 
+## Available Versions
+
+- `@v1.0.0` - Stable release (recommended)
+- `@main` - Latest development version
+
+## IAM Permissions Required
+
+The AWS credentials used must have the following permissions:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecr:DescribeImages"
+      ],
+      "Resource": "arn:aws:ecr:*:*:repository/*"
+    }
+  ]
+}
+```
+
 ## Development
 
 To build the action locally:
@@ -108,7 +134,21 @@ To run tests:
 
 ```bash
 npm test
+npm run typecheck
+npm run lint
 ```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and ensure they pass
+5. Submit a pull request
+
+## Repository
+
+https://github.com/ouchi2501/ecr-image-resolver
 
 ## License
 
